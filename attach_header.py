@@ -81,10 +81,30 @@ def main() -> None:
         sys.exit(1)
 
     # Extract fields from JSON
-    device_type: int = header_config.get("Device_type", 0)
-    data_type: int = header_config.get("Data_type", 0)
-    protocol_type: int = header_config.get("Protocol_type", 0)
+    device_type: int = header_config.get("Device_type",65535)
+    data_type: int = header_config.get("Data_type", 255)
+    protocol_type: int = header_config.get("Protocol_type", 65535)
     reserved_list: List[int] = header_config.get("Reserved", [])
+
+    # Check if all parameters are within the predefined bounds
+    if(device_type < 0 or device_type > 65535):
+        print("Device_type must be between 0 - 65535")
+        sys.exit(1)
+
+    if(data_type < 0 or data_type > 255):
+        print("Data_type must be between 0 - 255")
+        sys.exit(1)
+
+    if(protocol_type < 0 or protocol_type > 65535):
+        print("Protocol_type must be between 0 - 65535")
+        sys.exit(1)
+
+    j = 0
+    for i in reserved_list:
+        if(i < 0 or i > 255):
+            print(f"Reserved element number {j} must be between 0 - 255")
+            sys.exit(1)
+        j += 1
 
     # Ensure 'Reserved' has exactly 47 bytes
     if len(reserved_list) < 47:
